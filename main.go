@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -51,6 +52,20 @@ func addTask(description string) {
 	fmt.Printf("Task added successfully (ID: %d)\n", newTask.ID)
 }
 
+func updateTask(id int, description string) {
+	tasks := loadTask()
+	for i := range tasks {
+		if tasks[i].ID == id {
+			tasks[i].Description = description
+			tasks[i].UpdatedAt = time.Now().Format(time.RFC3339)
+			saveTasks(tasks)
+			fmt.Printf("Task updated successfully (ID: %d)\n", id)
+
+		}
+	}
+
+}
+
 func main() {
 	initTaskFile()
 
@@ -58,16 +73,26 @@ func main() {
 		fmt.Println("Expected 'add' command with task description")
 		return
 	}
-	
+
 	command := os.Args[1]
 
 	switch command {
 	case "add":
 		if len(os.Args) < 3 {
-            fmt.Println("Please provide a task description")
-        } else {
-            addTask(os.Args[2])
-        }
+			fmt.Println("Please provide a task description")
+		} else {
+			addTask(os.Args[2])
+		}
+	case "update":
+		if len(os.Args) < 3 {
+			fmt.Println("Please provide a task description")
+		} else {
+			idStr := os.Args[2]
+			id, _ := strconv.Atoi(idStr)
+			description := os.Args[3]
+			updateTask(id, description)
+		}
+
 	default:
 		fmt.Println("Unknown command:", command)
 	}
