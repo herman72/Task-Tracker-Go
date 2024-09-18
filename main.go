@@ -66,6 +66,24 @@ func updateTask(id int, description string) {
 
 }
 
+func deleteTask(id int) {
+	tasks := loadTask()
+	found := false
+	for i := range tasks {
+		if tasks[i].ID == id {
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			saveTasks(tasks)
+			fmt.Printf("Task deleted successfully (ID: %d)\n", id)
+			found = true
+			break
+
+		}
+	}
+	if !found {
+		fmt.Printf("Task not found (ID: %d)\n", id)
+	}
+}
+
 func main() {
 	initTaskFile()
 
@@ -91,6 +109,14 @@ func main() {
 			id, _ := strconv.Atoi(idStr)
 			description := os.Args[3]
 			updateTask(id, description)
+		}
+	case "delete":
+		if len(os.Args) < 2 {
+			fmt.Printf("please provide the task ID")
+		} else {
+			idStr := os.Args[2]
+			id, _ := strconv.Atoi(idStr)
+			deleteTask(id)
 		}
 
 	default:
