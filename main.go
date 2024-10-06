@@ -84,6 +84,21 @@ func deleteTask(id int) {
 	}
 }
 
+func markTask(id int, status string) {
+	tasks := loadTask()
+	for i := range tasks {
+		if tasks[i].ID == id {
+			tasks[i].Status = status
+			tasks[i].UpdatedAt = time.Now().Format(time.RFC3339)
+			saveTasks(tasks)
+			fmt.Printf("Task status with Id %d updated", id)
+			break
+		} else {
+			fmt.Printf("Task with ID %d was not found", id)
+		} 
+	}
+}
+
 func main() {
 	initTaskFile()
 
@@ -117,6 +132,22 @@ func main() {
 			idStr := os.Args[2]
 			id, _ := strconv.Atoi(idStr)
 			deleteTask(id)
+		}
+	case "mark-done":
+		if len(os.Args) < 2 {
+			fmt.Print("Please provide the task ID")
+		} else {
+			idStr := os.Args[2]		
+			id, _ := strconv.Atoi(idStr)
+			markTask(id, "done")
+		}
+	case "mark-in-progress":
+		if len(os.Args) < 2 {
+			fmt.Print("Please provide the task ID")
+		} else {
+			idStr := os.Args[2]		
+			id, _ := strconv.Atoi(idStr)
+			markTask(id, "in-progress")
 		}
 
 	default:
