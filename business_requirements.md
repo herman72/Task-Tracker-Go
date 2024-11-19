@@ -1,5 +1,6 @@
 Entities
-Category
+
+#Category
 Properties:
 Title
 Color
@@ -10,7 +11,8 @@ List User Categories with progress status
 Edit a category
 
 
-Task
+#Task  
+Properties:
 Title
 DueDate
 Category
@@ -24,7 +26,7 @@ Change Task status (done/undone)
 Edit a task
 
 
-User
+#User
 Properties:
 ID
 Email
