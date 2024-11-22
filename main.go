@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
+	"flag"
 	"fmt"
+	// "go/scanner"
 	"os"
-	"strconv"
+	// "strconv"
 	"time"
 )
 
@@ -100,59 +103,82 @@ func markTask(id int, status string) {
 }
 
 func main() {
-	initTaskFile()
+	fmt.Println("Hello todo application")
+	command := flag.String("command", "no command provided", "add, update, delete, mark-done, mark-in-progress")
+	flag.Parse()
+	scanner := bufio.NewScanner(os.Stdin)
 
-	if len(os.Args) < 2 {
-		fmt.Println("Expected 'add' command with task description")
-		return
+	if * command == "create-task" {
+		var name, dudate, category string
+		fmt.Printf("pls enter the task title: ")
+
+		scanner.Scan()
+		name = scanner.Text()
+
+		fmt.Printf("pls enter the task dudate: ")
+		scanner.Scan()
+		dudate = scanner.Text()
+
+		fmt.Printf("pls enter the task category: ")
+		scanner.Scan()
+		category = scanner.Text()
+
+		fmt.Printf("Task title: %s, Task dudate: %s, Task category: %s", name, dudate, category)
 	}
 
-	command := os.Args[1]
+	// initTaskFile()
 
-	switch command {
-	case "add":
-		if len(os.Args) < 3 {
-			fmt.Println("Please provide a task description")
-		} else {
-			addTask(os.Args[2])
-		}
-	case "update":
-		if len(os.Args) < 3 {
-			fmt.Println("Please provide a task description")
-		} else {
-			idStr := os.Args[2]
-			id, _ := strconv.Atoi(idStr)
-			description := os.Args[3]
-			updateTask(id, description)
-		}
-	case "delete":
-		if len(os.Args) < 2 {
-			fmt.Printf("please provide the task ID")
-		} else {
-			idStr := os.Args[2]
-			id, _ := strconv.Atoi(idStr)
-			deleteTask(id)
-		}
-	case "mark-done":
-		if len(os.Args) < 2 {
-			fmt.Print("Please provide the task ID")
-		} else {
-			idStr := os.Args[2]		
-			id, _ := strconv.Atoi(idStr)
-			markTask(id, "done")
-		}
-	case "mark-in-progress":
-		if len(os.Args) < 2 {
-			fmt.Print("Please provide the task ID")
-		} else {
-			idStr := os.Args[2]		
-			id, _ := strconv.Atoi(idStr)
-			markTask(id, "in-progress")
-		}
+	// if len(os.Args) < 2 {
+	// 	fmt.Println("Expected 'add' command with task description")
+	// 	return
+	// }
 
-	default:
-		fmt.Println("Unknown command:", command)
-	}
-	fmt.Println("Task Tracker CLI")
+	// command := os.Args[1]
+
+	// switch command {
+	// case "add":
+	// 	if len(os.Args) < 3 {
+	// 		fmt.Println("Please provide a task description")
+	// 	} else {
+	// 		addTask(os.Args[2])
+	// 	}
+	// case "update":
+	// 	if len(os.Args) < 3 {
+	// 		fmt.Println("Please provide a task description")
+	// 	} else {
+	// 		idStr := os.Args[2]
+	// 		id, _ := strconv.Atoi(idStr)
+	// 		description := os.Args[3]
+	// 		updateTask(id, description)
+	// 	}
+	// case "delete":
+	// 	if len(os.Args) < 2 {
+	// 		fmt.Printf("please provide the task ID")
+	// 	} else {
+	// 		idStr := os.Args[2]
+	// 		id, _ := strconv.Atoi(idStr)
+	// 		deleteTask(id)
+	// 	}
+	// case "mark-done":
+	// 	if len(os.Args) < 2 {
+	// 		fmt.Print("Please provide the task ID")
+	// 	} else {
+	// 		idStr := os.Args[2]		
+	// 		id, _ := strconv.Atoi(idStr)
+	// 		markTask(id, "done")
+	// 	}
+	// case "mark-in-progress":
+	// 	if len(os.Args) < 2 {
+	// 		fmt.Print("Please provide the task ID")
+	// 	} else {
+	// 		idStr := os.Args[2]		
+	// 		id, _ := strconv.Atoi(idStr)
+	// 		markTask(id, "in-progress")
+	// 	}
+
+	// default:
+	// 	fmt.Println("Unknown command:", command)
+	// }
+	// fmt.Println("Task Tracker CLI")
 
 }
