@@ -29,9 +29,6 @@ func main() {
 		scanner.Text()
 	}
 
-	
-	fmt.Printf("userStorage %+v\n",userStorage)
-
 }
 
 func runCommand(command string) {
