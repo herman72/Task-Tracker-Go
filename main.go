@@ -26,7 +26,7 @@ func main() {
 		fmt.Println("Enter command: ")
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
-		scanner.Text()
+		*command = scanner.Text()
 	}
 
 }
