@@ -10,6 +10,7 @@ import (
 
 type User struct {
 	ID int
+	name string
 	email string
 	password string
 }
@@ -75,7 +76,12 @@ func createTask() {
 func registerUser(){
 	scanner := bufio.NewScanner(os.Stdin)
 
-	var id, email, password string
+	var id, email, name, password string
+	
+	fmt.Println("pls enter the User name: ")
+	scanner.Scan()
+	name = scanner.Text()
+	
 	fmt.Println("pls enter the User email: ")
 	scanner.Scan()
 	email = scanner.Text()
@@ -86,10 +92,11 @@ func registerUser(){
 
 	id = email
 
-	fmt.Println("User name:, User email:, User password:", id, email, password)
+	fmt.Println("User name:, User email:, User password:", id, name, email, password)
 
 	user := User{
 		ID: len(userStorage) + 1,
+		name: name,
 		email: email,
 		password: password,
 	}
