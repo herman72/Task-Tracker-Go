@@ -10,18 +10,42 @@ import (
 
 type User struct {
 	ID int
-	name string
-	email string
-	password string
+	Name string
+	Email string
+	Password string
 }
 
 var userStorage []User
 
 func main() {
+
 	fmt.Println("Hello todo application")
 	command := flag.String("command", "no command provided", "add, update, delete, mark-done, mark-in-progress")
 	flag.Parse()
+	
+	if *command =! "register-user" && *command != "exit" {
+		println("must register user")
 
+		scn := bufio.NewScanner(os.Stdin)
+		fmt.Println("pls enter your email")
+		scn.Scan()
+		email := scn.Text()
+
+		fmt.Println("pls enter your pass")
+		scn.Scan()
+		pass := scn.Text()
+
+		for _, user := range userStorage {
+			if user.Email == email {
+
+
+			}
+		}
+
+
+
+		}
+		
 	for {
 		runCommand(*command)
 		fmt.Println("Enter command: ")
