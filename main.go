@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"time"
 )
 
 
@@ -17,12 +16,12 @@ type User struct {
 }
 
 type Task struct {
-	ID uint
+	ID int
 	Title string
-	Duedate time.Time
+	Duedate string
 	Category string
 	IsDone bool
-	UserId uint
+	UserId int
 }
 
 var userStorage []User
@@ -49,11 +48,17 @@ func runCommand(command string) {
 
 	if command != "register-user" && command != "exit" && authenticatedUser == nil{ 
 		login()
+
+		if authenticatedUser == nil {
+			return
+		}
 	}
 
 	switch command {
 	case "create-task":
 		createTask()
+	case "list-task":
+		listTask()
 	case "create-category":
 		createCategory()
 	case "register-user":
@@ -69,14 +74,13 @@ func runCommand(command string) {
 }
 
 func createTask() {
-	fmt.Println("authUser", authenticatedUser.Email)
 	scanner := bufio.NewScanner(os.Stdin)
 
-	var name, duedate, category string
+	var title, duedate, category string
 		
 	fmt.Println("pls enter the task title: ")
 	scanner.Scan()
-	name = scanner.Text()
+	title = scanner.Text()
 
 	fmt.Println("pls enter the task duedate: ")
 	scanner.Scan()
@@ -86,7 +90,20 @@ func createTask() {
 	scanner.Scan()
 	category = scanner.Text()
 
-	fmt.Println("Task title: , Task duedate: , Task category: ", name, duedate, category)
+	task := Task{
+		ID: len(taskStorage) + 1,
+		Title: title,
+		Duedate: duedate,
+		Category: category ,
+		IsDone: false,
+		UserId: authenticatedUser.ID,
+		
+
+	}
+
+	taskStorage = append(taskStorage, task)
+
+	fmt.Println("Task title: , Task duedate: , Task category: ", title, duedate, category)
 
 }
 
@@ -162,9 +179,18 @@ func login(){
 
 		if authenticatedUser == nil {
 			fmt.Println("User not found")
-			return
+			
 		}
 
 
 	fmt.Println("User email:, User password", email, password)
+}
+
+func listTask(){
+	for _,task := range taskStorage{
+		if task.ID == authenticatedUser.ID {
+			fmt.Println(task)
+		}
+		
+	}
 }
