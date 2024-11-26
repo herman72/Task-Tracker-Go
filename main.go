@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 )
 
 
@@ -15,36 +16,24 @@ type User struct {
 	Password string
 }
 
+type Task struct {
+	ID uint
+	Title string
+	Duedate time.Time
+	Category string
+	IsDone bool
+	UserId uint
+}
+
 var userStorage []User
+var taskStorage []Task
+var authenticatedUser *User
 
 func main() {
 
 	fmt.Println("Hello todo application")
 	command := flag.String("command", "no command provided", "add, update, delete, mark-done, mark-in-progress")
 	flag.Parse()
-	
-	if *command =! "register-user" && *command != "exit" {
-		println("must register user")
-
-		scn := bufio.NewScanner(os.Stdin)
-		fmt.Println("pls enter your email")
-		scn.Scan()
-		email := scn.Text()
-
-		fmt.Println("pls enter your pass")
-		scn.Scan()
-		pass := scn.Text()
-
-		for _, user := range userStorage {
-			if user.Email == email {
-
-
-			}
-		}
-
-
-
-		}
 		
 	for {
 		runCommand(*command)
@@ -57,6 +46,10 @@ func main() {
 }
 
 func runCommand(command string) {
+
+	if command != "register-user" && command != "exit" && authenticatedUser == nil{ 
+		login()
+	}
 
 	switch command {
 	case "create-task":
@@ -76,7 +69,7 @@ func runCommand(command string) {
 }
 
 func createTask() {
-	
+	fmt.Println("authUser", authenticatedUser.Email)
 	scanner := bufio.NewScanner(os.Stdin)
 
 	var name, duedate, category string
@@ -120,9 +113,9 @@ func registerUser(){
 
 	user := User{
 		ID: len(userStorage) + 1,
-		name: name,
-		email: email,
-		password: password,
+		Name: name,
+		Email: email,
+		Password: password,
 	}
 
 	userStorage = append(userStorage, user)
@@ -156,6 +149,22 @@ func login(){
 	fmt.Println("pls enter the User password: ")
 	scanner.Scan()
 	password = scanner.Text()
+
+		for _, user := range userStorage {
+			if user.Email == email && user.Password == password {
+				authenticatedUser = &user
+				fmt.Println("you are logged in")
+
+				break
+			} 
+			
+		}
+
+		if authenticatedUser == nil {
+			fmt.Println("User not found")
+			return
+		}
+
 
 	fmt.Println("User email:, User password", email, password)
 }
