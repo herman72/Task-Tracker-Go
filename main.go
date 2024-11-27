@@ -24,9 +24,18 @@ type Task struct {
 	UserId int
 }
 
+type Category struct{
+	 ID int
+	 Title string
+	 Color string
+	 UserId int
+}
+
 var userStorage []User
-var taskStorage []Task
 var authenticatedUser *User
+
+var taskStorage []Task
+var categoryStorage []Category
 
 func main() {
 
@@ -152,6 +161,16 @@ func createCategory(){
 	color = scanner.Text()
 
 	fmt.Println("Category title:, Category color:", title, color)
+
+	category := Category{
+		ID: len(categoryStorage) + 1,
+		Title: title,
+		Color: color,
+		UserId: authenticatedUser.ID,
+	}
+
+	categoryStorage = append(categoryStorage, category)
+
 }
 
 func login(){
