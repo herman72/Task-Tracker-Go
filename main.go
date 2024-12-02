@@ -168,33 +168,16 @@ func registerUser(){
 	path := "user.txt"
 	var file *os.File
 
-	_, err := os.Stat(path)
+	file, err := os.OpenFile(path, os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)
 
 	if err != nil {
-		fmt.Println("path does not exist", err)
-
-		file, err = os.Create("user.txt")
-
-		if err !=nil {
-			fmt.Println("can't create file the user.txt file", err)
-			return
-		} 
-	}else {
-		file, err = os.Open(path)
-
-		if err!= nil {
-			fmt.Println("file does not exist", err)
-			return
-		}
+		fmt.Println("can't write file", err)
 	}
 
-	file, err := os.Create("user.txt")
+	data := fmt.Sprintf("id: %d, name: %s, email: %s, password: %s\n", 
+	user.ID, user.Name, user.Email, user.Password)
 
-	if err !=nil {
-		fmt.Println("can't create file the user.txt file", err)
-	} 
-
-	file.Write([]byte("new"))
+	file.Write([]byte(data))
 	file.Close()
 }
 
