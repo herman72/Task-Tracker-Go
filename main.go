@@ -127,7 +127,7 @@ func createTask() {
 		UserId: authenticatedUser.ID,
 		
 
-	}
+	} 
 
 	taskStorage = append(taskStorage, task)
 
@@ -164,6 +164,38 @@ func registerUser(){
 	}
 
 	userStorage = append(userStorage, user)
+
+	path := "user.txt"
+	var file *os.File
+
+	_, err := os.Stat(path)
+
+	if err != nil {
+		fmt.Println("path does not exist", err)
+
+		file, err = os.Create("user.txt")
+
+		if err !=nil {
+			fmt.Println("can't create file the user.txt file", err)
+			return
+		} 
+	}else {
+		file, err = os.Open(path)
+
+		if err!= nil {
+			fmt.Println("file does not exist", err)
+			return
+		}
+	}
+
+	file, err := os.Create("user.txt")
+
+	if err !=nil {
+		fmt.Println("can't create file the user.txt file", err)
+	} 
+
+	file.Write([]byte("new"))
+	file.Close()
 }
 
 func createCategory(){
