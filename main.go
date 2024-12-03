@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 
@@ -258,7 +259,7 @@ func loadUserStorageFromFile(){
 		fmt.Println("there is no file", err)
 	}
 
-	var data = make([]byte, 10240)
+	var data = make([]byte, 1024)
 	_, oErr :=file.Read(data)
 
 	if oErr != nil {
@@ -266,5 +267,40 @@ func loadUserStorageFromFile(){
 	}
 
 	var dataString = string(data)
-	fmt.Println("data", data)
+	dataString = strings.Trim(dataString, "\n")
+	userSlice := strings.Split(dataString, "\n")
+	for _, u := range userSlice {
+		userFields := strings.Split(u, ",")
+		var user = User{}
+		for _, field := range userFields {
+			values := strings.Split(field, ": ")
+			fieldName := strings.ReplaceAll(values[0], " ", "")
+			fieldValue := values[1]
+
+			
+
+			switch fieldName {
+			case "id":
+				id, err := strconv.Atoi(fieldValue)
+				if err != nil {
+					fmt.Println("error in ")
+					
+					return
+				}
+				user.ID = id
+			
+			case "name":
+				user.Name = fieldValue
+			case "email":
+				user.Email = fieldValue
+			case "password":
+				user.Password = fieldValue
+			}
+
+
+
+		}
+		fmt.Printf("user %v\n", user)
+
+	}
 }
