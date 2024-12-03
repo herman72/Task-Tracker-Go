@@ -38,7 +38,11 @@ var authenticatedUser *User
 var taskStorage []Task
 var categoryStorage []Category
 
+const userStoragePath = "user.txt"
+
 func main() {
+
+	loadUserStorageFromFile()
 
 	fmt.Println("Hello todo application")
 	command := flag.String("command", "no command provided", "add, update, delete, mark-done, mark-in-progress")
@@ -165,10 +169,9 @@ func registerUser(){
 
 	userStorage = append(userStorage, user)
 
-	path := "user.txt"
 	var file *os.File
 
-	file, err := os.OpenFile(path, os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)
+	file, err := os.OpenFile(userStoragePath, os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)
 
 	if err != nil {
 		fmt.Println("can't write file", err)
@@ -246,4 +249,22 @@ func listTask(){
 		}
 		
 	}
+}
+
+func loadUserStorageFromFile(){
+	file, err := os.Open(userStoragePath)
+
+	if err != nil {
+		fmt.Println("there is no file", err)
+	}
+
+	var data = make([]byte, 10240)
+	_, oErr :=file.Read(data)
+
+	if oErr != nil {
+		fmt.Println("can't read from ", oErr)
+	}
+
+	var dataString = string(data)
+	fmt.Println("data", data)
 }
