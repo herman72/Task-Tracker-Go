@@ -296,11 +296,8 @@ func loadUserStorageFromFile(){
 			case "password":
 				user.Password = fieldValue
 			}
-
-
-
 		}
-		fmt.Printf("user %v\n", user)
+		fmt.Printf("user %+v\n", user)
 
 	}
 }
