@@ -270,10 +270,17 @@ func loadUserStorageFromFile(){
 	dataString = strings.Trim(dataString, "\n")
 	userSlice := strings.Split(dataString, "\n")
 	for _, u := range userSlice {
+		if u == ""{
+			continue
+		}
 		userFields := strings.Split(u, ",")
 		var user = User{}
 		for _, field := range userFields {
 			values := strings.Split(field, ": ")
+			if len(values) != 2 {
+				fmt.Printf("invalid field format: %v\n", field)
+				continue
+			}
 			fieldName := strings.ReplaceAll(values[0], " ", "")
 			fieldValue := values[1]
 
