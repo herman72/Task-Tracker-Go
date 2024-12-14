@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 
@@ -38,7 +39,11 @@ var authenticatedUser *User
 var taskStorage []Task
 var categoryStorage []Category
 
+const userStoragePath = "user.txt"
+
 func main() {
+
+	loadUserStorageFromFile()
 
 	fmt.Println("Hello todo application")
 	command := flag.String("command", "no command provided", "add, update, delete, mark-done, mark-in-progress")
@@ -127,7 +132,7 @@ func createTask() {
 		UserId: authenticatedUser.ID,
 		
 
-	}
+	} 
 
 	taskStorage = append(taskStorage, task)
 
@@ -164,6 +169,20 @@ func registerUser(){
 	}
 
 	userStorage = append(userStorage, user)
+
+	var file *os.File
+
+	file, err := os.OpenFile(userStoragePath, os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)
+
+	if err != nil {
+		fmt.Println("can't write file", err)
+	}
+
+	data := fmt.Sprintf("id: %d, name: %s, email: %s, password: %s\n", 
+	user.ID, user.Name, user.Email, user.Password)
+
+	file.Write([]byte(data))
+	file.Close()
 }
 
 func createCategory(){
@@ -230,5 +249,62 @@ func listTask(){
 			fmt.Println(task)
 		}
 		
+	}
+}
+
+func loadUserStorageFromFile(){
+	file, err := os.Open(userStoragePath)
+
+	if err != nil {
+		fmt.Println("there is no file", err)
+	}
+
+	var data = make([]byte, 1024)
+	_, oErr :=file.Read(data)
+
+	if oErr != nil {
+		fmt.Println("can't read from ", oErr)
+	}
+
+	var dataString = string(data)
+	dataString = strings.Trim(dataString, "\n")
+	userSlice := strings.Split(dataString, "\n")
+	for _, u := range userSlice {
+		if u == ""{
+			continue
+		}
+		userFields := strings.Split(u, ",")
+		var user = User{}
+		for _, field := range userFields {
+			values := strings.Split(field, ": ")
+			if len(values) != 2 {
+				fmt.Printf("invalid field format: %v\n", field)
+				continue
+			}
+			fieldName := strings.ReplaceAll(values[0], " ", "")
+			fieldValue := values[1]
+
+			
+
+			switch fieldName {
+			case "id":
+				id, err := strconv.Atoi(fieldValue)
+				if err != nil {
+					fmt.Println("error in ")
+					
+					return
+				}
+				user.ID = id
+			
+			case "name":
+				user.Name = fieldValue
+			case "email":
+				user.Email = fieldValue
+			case "password":
+				user.Password = fieldValue
+			}
+		}
+		fmt.Printf("user %+v\n", user)
+
 	}
 }
