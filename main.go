@@ -9,6 +9,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"crypto/md5"
+	"encoding/hex"
 )
 
 type User struct {
@@ -173,12 +176,12 @@ func registerUser() {
 	id = email
 
 	fmt.Println("User name:, User email:, User password:", id, name, email, password)
-
+	
 	user := User{
 		ID:       len(userStorage) + 1,
 		Name:     name,
 		Email:    email,
-		Password: password,
+		Password: hashThePassword(password),
 	}
 
 	userStorage = append(userStorage, user)
@@ -226,7 +229,7 @@ func login() {
 	password = scanner.Text()
 
 	for _, user := range userStorage {
-		if user.Email == email && user.Password == password {
+		if user.Email == email && user.Password == hashThePassword(password) {
 			authenticatedUser = &user
 			fmt.Println("you are logged in")
 
@@ -234,13 +237,10 @@ func login() {
 		}
 
 	}
-
 	if authenticatedUser == nil {
-		fmt.Println("User not found")
-
+		fmt.Println("the email or password is not correct")
 	}
 
-	fmt.Println("User email:, User password", email, password)
 }
 
 func listTask() {
@@ -370,5 +370,13 @@ func deSerilizedOldOne(userStr string) (User, error) {
 		}
 	}
 	return user, nil
+
+}
+
+func hashThePassword(password string) string {
+
+	hash := md5.Sum([]byte(password))
+
+	return hex.EncodeToString(hash[:])
 
 }
