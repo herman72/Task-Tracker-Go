@@ -42,33 +42,48 @@ package main
 import "fmt"
 
 func main(){
-    nums := []int{0,1,2,2,3,0,4,2}
-    var val int = 2
-     k := removeElement(nums, val)
+    nums := []int{0,0,1,1,1,2,2,3,3,4}
+    // var val int = 2
+     k := removeDuplicates(nums)
      fmt.Println(k)
 
 }
 
-func removeElement(nums []int, val int) int {
+// func removeElement(nums []int, val int) int {
 
-    // var listLen int = len(nums)
-    // for i:=0;  i < len(nums); i++{
+//     // var listLen int = len(nums)
+//     // for i:=0;  i < len(nums); i++{
 
-    //     if nums[i] == val {
-    //         nums = append(nums[:i], nums[i+1:]...)
-    //         i--
+//     //     if nums[i] == val {
+//     //         nums = append(nums[:i], nums[i+1:]...)
+//     //         i--
 
-    //     }
+//     //     }
 
-    // }
-    // return len(nums)
-    k := 0
-    for i := 0; i < len(nums); i++ {
-        if nums[i] != val {
+//     // }
+//     // return len(nums)
+//     k := 0
+//     for i := 0; i < len(nums); i++ {
+//         if nums[i] != val {
+//             nums[k] = nums[i]
+//             k++
+//         }
+//     }
+//     return k
+    
+// }
+
+func removeDuplicates(nums []int) int {
+    var k int = 1
+    var selected_number int = 0
+    for i := 1; i < len(nums); i++ {
+        selected_number = nums[i-1]
+
+        if nums[i] != selected_number {
             nums[k] = nums[i]
             k++
-        }
+        } 
+
     }
     return k
-    
 }
