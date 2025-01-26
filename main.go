@@ -62,7 +62,7 @@ func main() {
 
 	var userReadFileStore userReadStore
 	var userReadStore = fileStore{
-		filePath: "./",
+		filePath: userStoragePath,
 	}
 
 	userReadFileStore = userReadStore
@@ -97,7 +97,7 @@ func runCommand(command string) {
 
 	var store userWriteStore
 	var userFileStore = fileStore {
-		filePath: "./store",
+		filePath: userStoragePath,
 	}
 
 	store = userFileStore
@@ -285,10 +285,10 @@ func loadUserFromStorage(store userReadStore, serialiazatinMode string){
 	
 // }
 
-func writeUserToFile(user User) {
+func (f fileStore)writeUserToFile(user User) {
 	var file *os.File
 
-	file, err := os.OpenFile(userStoragePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(f.filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
 	if err != nil {
 		fmt.Println("can't write file", err)
@@ -371,12 +371,12 @@ type fileStore struct {
 }
 
 func (f fileStore)Save(u User){
-	writeUserToFile(u)
+	f.writeUserToFile(u)
 }
 
 func (f fileStore)Load(serializationMode string) []User {
 	var uStorage []User
-	file, err := os.Open(userStoragePath)
+	file, err := os.Open(f.filePath)
 	
 	if err != nil {
 		fmt.Println("there is no file", err)
