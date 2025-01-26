@@ -58,7 +58,15 @@ func main() {
 	command := flag.String("command", "no command provided", "add, update, delete, mark-done, mark-in-progress")
 	flag.Parse()
 
-	loadUserStorageFromFile(*serilizedMode)
+	// loadUserStorageFromFile(*serilizedMode)
+
+	var userReadFileStore userReadStore
+	var userReadStore = fileStore{
+		filePath: "./",
+	}
+
+	userReadFileStore = userReadStore
+	loadUserFromStorage(userReadFileStore, *serilizedMode)
 
 	switch *serilizedMode {
 	case oldOneSerilizationMode:
@@ -87,6 +95,13 @@ func runCommand(command string) {
 		}
 	}
 
+	var store userWriteStore
+	var userFileStore = fileStore {
+		filePath: "./store",
+	}
+
+	store = userFileStore
+
 	switch command {
 	case "create-task":
 		createTask()
@@ -95,7 +110,7 @@ func runCommand(command string) {
 	case "create-category":
 		createCategory()
 	case "register-user":
-		registerUser()
+		registerUser(store)
 	case "login":
 		login()
 	case "exit":
@@ -156,7 +171,15 @@ func createTask() {
 
 }
 
-func registerUser() {
+type userWriteStore interface {
+	Save(u User)
+}
+
+type userReadStore interface {
+	Load(serialiazatinMode string) []User
+}
+
+func registerUser(store userWriteStore) {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	var id, email, name, password string
@@ -185,8 +208,8 @@ func registerUser() {
 	}
 
 	userStorage = append(userStorage, user)
-	writeUserToFile(user)
-
+	// writeUserToFile(user)
+	store.Save(user)
 }
 
 func createCategory() {
@@ -252,53 +275,15 @@ func listTask() {
 	}
 }
 
-func loadUserStorageFromFile(serialiazatinMode string) {
-	file, err := os.Open(userStoragePath)
-	
-	if err != nil {
-		fmt.Println("there is no file", err)
-	}
+func loadUserFromStorage(store userReadStore, serialiazatinMode string){
+	user := store.Load(serialiazatinMode)
 
-	var data = make([]byte, 1024)
-	_, oErr := file.Read(data)
-
-	if oErr != nil {
-		fmt.Println("can't read from ", oErr)
-	}
-
-	var dataString = string(data)
-	dataString = strings.Trim(dataString, "\n")
-	userSlice := strings.Split(dataString, "\n")
-
-	for _, u := range userSlice {
-		
-		var userStruct = User{}
-
-		switch serialiazatinMode {
-		case oldOneSerilizationMode:
-			var dErr error
-			userStruct, dErr = deSerilizedOldOne(u)
-
-			if dErr != nil {
-				fmt.Println("cant desrilized user record to user struct", dErr)
-				return
-			}
-
-		case JsonSerializationMode:
-			if u[0] != '{' && u[len(u)-1] != '}' {
-				continue
-			}
-
-			uErr := json.Unmarshal([]byte(u), &userStruct)
-			if uErr != nil {
-				fmt.Println("cant desrilized user record to user struct from json mode", uErr)
-				return
-			}
-		}
-		userStorage = append(userStorage, userStruct)
-
-	}
+	userStorage = append(userStorage, user...)
 }
+
+// func loadUserStorageFromFile(serialiazatinMode string) {
+	
+// }
 
 func writeUserToFile(user User) {
 	var file *os.File
@@ -378,5 +363,65 @@ func hashThePassword(password string) string {
 	hash := md5.Sum([]byte(password))
 
 	return hex.EncodeToString(hash[:])
+
+}
+
+type fileStore struct {
+	filePath string
+}
+
+func (f fileStore)Save(u User){
+	writeUserToFile(u)
+}
+
+func (f fileStore)Load(serializationMode string) []User {
+	var uStorage []User
+	file, err := os.Open(userStoragePath)
+	
+	if err != nil {
+		fmt.Println("there is no file", err)
+	}
+
+	var data = make([]byte, 1024)
+	_, oErr := file.Read(data)
+
+	if oErr != nil {
+		fmt.Println("can't read from ", oErr)
+	}
+
+	var dataString = string(data)
+	dataString = strings.Trim(dataString, "\n")
+	userSlice := strings.Split(dataString, "\n")
+
+	for _, u := range userSlice {
+		
+		var userStruct = User{}
+
+		switch serialiazatinMode {
+		case oldOneSerilizationMode:
+			var dErr error
+			userStruct, dErr = deSerilizedOldOne(u)
+
+			if dErr != nil {
+				fmt.Println("cant desrilized user record to user struct", dErr)
+				return nil
+			}
+
+		case JsonSerializationMode:
+			if u[0] != '{' && u[len(u)-1] != '}' {
+				continue
+			}
+
+			uErr := json.Unmarshal([]byte(u), &userStruct)
+			if uErr != nil {
+				fmt.Println("cant desrilized user record to user struct from json mode", uErr)
+				return nil
+			}
+		}
+		uStorage = append(uStorage, userStruct)
+
+	}
+
+	return uStorage
 
 }
