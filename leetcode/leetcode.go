@@ -42,32 +42,60 @@ package main
 import "fmt"
 
 func main(){
-    nums := []int{0,1,2,2,3,0,4,2}
-    var val int = 2
-     k := removeElement(nums, val)
+    nums := []int{1,1,1,1}
+     k := removeDuplicates(nums)
      fmt.Println(k)
 
 }
 
-func removeElement(nums []int, val int) int {
+// func removeElement(nums []int, val int) int {
 
-    // var listLen int = len(nums)
-    // for i:=0;  i < len(nums); i++{
+//     // var listLen int = len(nums)
+//     // for i:=0;  i < len(nums); i++{
 
-    //     if nums[i] == val {
-    //         nums = append(nums[:i], nums[i+1:]...)
-    //         i--
+//     //     if nums[i] == val {
+//     //         nums = append(nums[:i], nums[i+1:]...)
+//     //         i--
 
-    //     }
+//     //     }
 
-    // }
-    // return len(nums)
-    k := 0
-    for i := 0; i < len(nums); i++ {
-        if nums[i] != val {
+//     // }
+//     // return len(nums)
+//     k := 0
+//     for i := 0; i < len(nums); i++ {
+//         if nums[i] != val {
+//             nums[k] = nums[i]
+//             k++
+//         }
+//     }
+//     return k
+    
+// }
+
+// Q 80. Remove Duplicates from Sorted Array II
+
+func removeDuplicates(nums []int) int {
+
+    var k int = 1
+    var selectedNumber int = 0
+    var counter int = 1
+
+    for i :=1; i < len(nums); i++ {
+        selectedNumber = nums[i-1]
+        if nums[i] != selectedNumber {
             nums[k] = nums[i]
             k++
-        }
+            counter = 1
+        } else if nums[i] == selectedNumber && counter ==1{
+            nums[k] = nums[i]
+            k++
+            counter ++
+        } else if nums[i] == selectedNumber && counter >=2{
+
+            counter ++
+
+        } 
+        
     }
     return k
     
